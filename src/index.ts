@@ -103,7 +103,8 @@ function resolveVirtualPlugin(config: Required<LemmegoPluginOptions>): Plugin {
             manifestPath = path.resolve(root, config.frontendManifest)
             const manifest = fs.existsSync(manifestPath) ? readManifest() : lastManifest
             const roots = (manifest.modules ?? []).map(module => module.root ? path.resolve(root, module.root) : undefined).filter((value): value is string => Boolean(value))
-            return roots.length > 0 ? { server: { fs: { allow: roots } } } : {}
+            const allow = [...new Set([root, ...(viteConfig.server?.fs?.allow ?? []), ...roots])]
+            return { server: { fs: { allow } } }
         },
         configResolved(resolved) {
             root = resolved.root

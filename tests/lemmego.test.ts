@@ -45,6 +45,9 @@ describe('@lemmego/vite', () => {
         }))
         const plugins = lemmego({ input: 'app.tsx' })
         const plugin = plugins.find(item => !Array.isArray(item) && item?.name === 'lemmego:virtual') as TestPlugin
+        const virtualConfig = plugin.config?.({ root }, {})
+        expect(virtualConfig.server.fs.allow).toContain(root)
+        expect(virtualConfig.server.fs.allow).toContain(path.join(root, 'vendor/demo'))
         plugin.configResolved({ root })
 
         const pages = plugin.load(`\0${pagesId}`)
